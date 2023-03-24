@@ -15,8 +15,14 @@ module "vpc" {
   }
 }
 
+module "key_pair" {
+  source                    = "terraform-aws-modules/key-pair/aws"
+  key_name                  = var.keyname
+  public_key                = file("~/keypairs/Codeman.pub")
+}
+
 module "sg" {
   source                    = "./personal_module/sg"
-  vpc                   = module.vpc.vpc_id
+  vpc                       = module.vpc.vpc_id
 }
 
