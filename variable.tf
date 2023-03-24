@@ -34,4 +34,59 @@ variable "pub-sn1" {
 variable "pub-sn2" {
   default            = "10.0.4.0/24"
 }
+# Keypair Name
+variable "keyname"  {
+  default             = "Codeman"  
+}
 
+variable "ec2_name" {
+  default            = "Codeman-ec2"
+}
+
+variable "ec2_ami" {
+  default            = "ami-05c96317a6278cfaa"
+}
+
+variable "instancetype" {
+  default            = "t3.medium"  
+  }
+
+
+
+# variable "sonar-name" {
+#   default            = "sonar-sever"
+#   }
+# variable "docker_name" {
+#   default            = "docker_server"
+# }
+
+# #ASG Variables
+# variable "ami-name" {
+# default = "host_ami"
+# }
+# variable "target-instance" {
+# default = "docker_server"
+# }
+# variable "launch-configname" {
+# default = "host_ASG_LC"
+# }
+
+# variable "sg_name3" {
+# default = "                                                "
+# }
+
+# variable "asg-group-name" {
+# default = "pacaad_ASG"
+# }
+# variable "vpc-zone-identifier" {
+# default = ""
+# }
+# variable "target-group-arn" {
+# default = ""
+# }
+# variable "asg-policy" {
+# default = ""
+# }
+# variable "alb" {
+#   default = "pacaad-lb"
+# }

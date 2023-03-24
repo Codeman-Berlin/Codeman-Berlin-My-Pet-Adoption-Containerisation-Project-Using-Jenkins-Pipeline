@@ -244,8 +244,8 @@ resource "aws_security_group" "Bastion_SG" {
 }
 
 #Backend SG - Database 
-resource "aws_security_group" "PACEUD_DB_Backend_SG" {
-  name        = "allow_tls"
+resource "aws_security_group" "Backend_SG" {
+  name        = "${var.name}-backend-sg"
   description = "Allow TLS inbound traffic"
   vpc_id      = var.vpc
 

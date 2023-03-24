@@ -26,3 +26,21 @@ module "sg" {
   vpc                       = module.vpc.vpc_id
 }
 
+module "Bastion" {
+  source                    = "terraform-aws-modules/ec2-instance/aws"
+  name                      = var.ec2_name
+  ami                       = var.ec2_ami
+  instance_type             = var.instancetype
+  key_name                  = module.key_pair.key_pair_name
+  vpc_security_group_ids    = [module.sg.bastion-sg-id]
+  subnet_id                 = module.vpc.public_subnets[0]
+  user_data                 = templatefile("./User-data/Bastion.sh",
+    {
+      keypair = "~/keypairs/Codeman"
+    }
+  )
+  tags = {
+    Terraform               = "true"
+    Name                    = "${var.name}-Bastion"
+  }
+}
