@@ -14,3 +14,9 @@ module "vpc" {
     Name                    = "${var.name}-vpc"
   }
 }
+
+module "sg" {
+  source                    = "./personal_module/sg"
+  eud-vpc                   = module.vpc.vpc_id
+}
+
