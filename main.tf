@@ -17,6 +17,6 @@ module "vpc" {
 
 module "sg" {
   source                    = "./personal_module/sg"
-  eud-vpc                   = module.vpc.vpc_id
+  vpc                   = module.vpc.vpc_id
 }
 
