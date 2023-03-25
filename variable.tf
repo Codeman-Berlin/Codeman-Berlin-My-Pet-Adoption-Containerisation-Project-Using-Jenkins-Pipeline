@@ -1,72 +1,71 @@
 # VPC Name
 variable "vpc_name" {
-  default                          = "Codeman-VPC"
+  default = "Codeman-VPC"
 }
 # Name to be attached to all resources
 variable "name" {
-  default                          = "Codeman"
+  default = "Codeman"
 }
 # VPC Classless Inter-Domain Routing Block (cidr block)
 variable "vpc_cidr" {
-  default                          = "10.0.0.0/16"
+  default = "10.0.0.0/16"
 }
 # Availability Zone 1
 variable "az1" {
-  default            = "eu-west-2a"
+  default = "eu-west-2a"
 }
 # Availability Zone 2
 variable "az2" {
-  default            = "eu-west-2b"
+  default = "eu-west-2b"
 }
 # Private Subnet cidr-block 1
 variable "prv-sn1" {
-  default            = "10.0.1.0/24"
+  default = "10.0.1.0/24"
 }
 #Private Subnet cidr-block 2
 variable "prv-sn2" {
-  default            = "10.0.2.0/24"
+  default = "10.0.2.0/24"
 }
 # Public Subnet cidr-block 1
 variable "pub-sn1" {
-  default            = "10.0.3.0/24"
+  default = "10.0.3.0/24"
 }
 # Public Subnet cidr-block 2
 variable "pub-sn2" {
-  default            = "10.0.4.0/24"
+  default = "10.0.4.0/24"
 }
 # Keypair Name
-variable "keyname"  {
-  default             = "Codeman"  
+variable "keyname" {
+  default = "Codeman"
 }
 
 variable "ec2_name" {
-  default            = "Codeman-ec2"
+  default = "Codeman-ec2"
 }
 
 variable "ec2_ami" {
-  default            = "ami-05c96317a6278cfaa"
+  default = "ami-05c96317a6278cfaa"
 }
 
 variable "instancetype" {
-  default            = "t3.medium"  
-  }
+  default = "t3.medium"
+}
 
+variable "sonar-name" {
+  default            = "sonar-sever"
+}
 
-
-# variable "sonar-name" {
-#   default            = "sonar-sever"
-#   }
-# variable "docker_name" {
-#   default            = "docker_server"
-# }
+variable "docker_name" {
+  default            = "docker_server"
+}
 
 # #ASG Variables
 # variable "ami-name" {
 # default = "host_ami"
 # }
-# variable "target-instance" {
-# default = "docker_server"
-# }
+variable "target-instance" {
+default = "docker_server"
+}
 # variable "launch-configname" {
 # default = "host_ASG_LC"
 # }
@@ -76,17 +75,17 @@ variable "instancetype" {
 # }
 
 # variable "asg-group-name" {
-# default = "pacaad_ASG"
+# default = "Codeman_ASG"
 # }
-# variable "vpc-zone-identifier" {
-# default = ""
-# }
-# variable "target-group-arn" {
-# default = ""
-# }
+variable "vpc-zone-identifier" {
+default = ""
+}
+variable "target-group-arn" {
+default = ""
+}
 # variable "asg-policy" {
 # default = ""
 # }
-# variable "alb" {
-#   default = "pacaad-lb"
-# }
+variable "alb" {
+  default = "Codeman-lb"
+}
