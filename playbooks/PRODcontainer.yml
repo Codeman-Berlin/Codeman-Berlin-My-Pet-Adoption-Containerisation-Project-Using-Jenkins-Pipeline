@@ -1,0 +1,27 @@
+---
+ - hosts: PROD_Server
+   become: true
+   vars:
+    default_container_image: daicon001/pipeline:1.0.11
+
+   tasks:
+     - name: login to dockerhub
+       command: docker login -u daicon001 -p Ibrahim24.
+
+     - name: Stop any container running
+       command: docker stop pet-adoption-container
+       ignore_errors: yes
+
+     - name: Remove stopped container
+       command: docker rm pet-adoption-container
+       ignore_errors: yes
+
+     - name: Remove docker image
+       command: docker rmi daicon001/pipeline:1.0.11
+       ignore_errors: yes
+
+     - name: Pull default Docker image
+       command: docker pull  daicon001/pipeline:1.0.11
+
+     - name: Restart a container
+       command: docker run -it -d --name pet-adoption-container -p 8080:8085 daicon001/pipeline:1.0.11

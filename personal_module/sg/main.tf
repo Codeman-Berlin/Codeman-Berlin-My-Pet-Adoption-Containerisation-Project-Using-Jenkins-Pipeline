@@ -228,7 +228,7 @@ resource "aws_security_group" "Bastion_SG" {
     from_port   = var.http_port
     to_port     = var.http_port
     protocol    = "tcp"
-    cidr_blocks = [var.all_access]
+    cidr_blocks = [var.personal_addy] # my computer ip address
   }
 
   egress {
