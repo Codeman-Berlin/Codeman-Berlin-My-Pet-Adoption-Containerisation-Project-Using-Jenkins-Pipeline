@@ -2,7 +2,7 @@
  - hosts: PROD_Server
    become: true
    vars:
-    default_container_image: daicon001/pipeline:1.0.11
+    default_container_image: daicon001/codeman
 
    tasks:
      - name: login to dockerhub
@@ -17,11 +17,11 @@
        ignore_errors: yes
 
      - name: Remove docker image
-       command: docker rmi daicon001/pipeline:1.0.11
+       command: docker rmi daicon001/codeman
        ignore_errors: yes
 
      - name: Pull default Docker image
-       command: docker pull  daicon001/pipeline:1.0.11
+       command: docker pull  daicon001/codeman
 
      - name: Restart a container
-       command: docker run -it -d --name pet-adoption-container -p 8080:8085 daicon001/pipeline:1.0.11
+       command: docker run -it -d --name pet-adoption-container -p 8080:8085 daicon001/codeman

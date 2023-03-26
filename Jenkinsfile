@@ -3,14 +3,10 @@ pipeline{
     tools{
         maven 'maven'
     }
-    environment {
-        dockerusername = credentials('dockerhub-username')
-        dockerpassword = credentials('dockerhub-password')
-    }
     stages{
         stage('Git pull'){
             steps{
-                git branch: 'main', credentialsId: 'git-cred', url: 'https://github.com/CloudHight/Pet-Adoption-Containerisation-Project-Application-Day-Team--06-Feb.git'
+                git branch: 'kubernetes', credentialsId: 'git-cred', url: 'https://github.com/CloudHight/Set_5_Pet_Adoption_Application_Team_3.git'
             }
         }
         stage('code analysis'){
@@ -27,29 +23,29 @@ pipeline{
         }
         stage('build image'){
             steps{
-                sh 'docker build -t daicon001/pipeline:1.0.11 .'
+                sh 'docker build -t daicon001/codeman .'
             }
         }
         stage('login to dockerhub'){
             steps{
-                sh 'docker login -u $dockerusername -p $dockerpassword'
+                sh 'docker login -u daicon001 -p Ibrahim24.'
             }
         }
         stage('push image'){
             steps{
-                sh 'docker push $dockerusername/pipeline:1.0.11'
+                sh 'docker push daicon001/codeman'
             }
         }
         stage('deploy to QA'){
             steps{
-                sshagent(['jenkins-key']) {
-                    sh 'ssh -t -t ec2-user@10.0.1.83 -o StrictHostKeyChecking=no "ansible-playbook /home/ec2-user/playbooks/QAcontainer.yml"'
+                sshagent(['jenkins']) {
+                    sh 'ssh -t -t ec2-user@10.0.1.95 -o StrictHostKeyChecking=no "ansible-playbook /home/ec2-user/playbooks/QAcontainer.yml"'
                }
             }
         }
         stage('slack notification'){
             steps{
-                slackSend channel: 'jenkins-pipeline', message: 'successfully deployed to QA sever need approval to deploy PROD Env', teamDomain: 'Fidelaimah', tokenCredentialId: 'slack-cred'
+                slackSend channel: 'jenkins-pipeline', message: 'successfully deployed to QA sever need approval to deploy PROD Env', teamDomain: 'Codeman-devops', tokenCredentialId: 'slack-cred'
             }
         }
         stage('Approval'){
@@ -62,17 +58,17 @@ pipeline{
         stage('deploy to PROD'){
             steps{
                sshagent(['jenkins-key']) {
-                    sh 'ssh -t -t ec2-user@10.0.1.83 -o StrictHostKeyChecking=no "ansible-playbook /home/ec2-user/playbooks/PRODcontainer.yml"'
+                    sh 'ssh -t -t ec2-user@10.0.1.95 -o StrictHostKeyChecking=no "ansible-playbook /home/ec2-user/playbooks/PRODcontainer.yml"'
                }  
             }
         }
     }
     post {
      success {
-       slackSend channel: 'jenkins-pipeline', message: 'successfully deployed to PROD Env ', teamDomain: 'Fidelaimah', tokenCredentialId: 'slack-cred'
+       slackSend channel: 'jenkins-pipeline', message: 'successfully deployed to PROD Env ', teamDomain: 'Codeman-devops', tokenCredentialId: 'slack-cred'
      }
      failure {
-       slackSend channel: 'jenkins-pipeline', message: 'failed to deploy to PROD Env', teamDomain: 'Fidelaimah', tokenCredentialId: 'slack-cred'
+       slackSend channel: 'jenkins-pipeline', message: 'failed to deploy to PROD Env', teamDomain: 'Codeman-devops', tokenCredentialId: 'slack-cred'
      }
   }
 

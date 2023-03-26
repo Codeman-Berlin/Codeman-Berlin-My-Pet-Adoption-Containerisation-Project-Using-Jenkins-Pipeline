@@ -40,7 +40,7 @@ variable "keyname" {
 }
 
 variable "ec2_name" {
-  default = "Codeman-ec2"
+  default = "Codeman-Docker"
 }
 
 variable "ec2_ami" {
@@ -88,4 +88,8 @@ default = ""
 # }
 variable "alb" {
   default = "Codeman-lb"
+}
+
+variable "lb-zone-id" {
+  default = "dummy"
 }
