@@ -140,19 +140,19 @@ module "App_loadbalancer" {
   target_instance = module.Docker[1].id
 }
 
-# s3 Bucket & Policy
-module "s3_bucket_for_logs" {
-  source = "terraform-aws-modules/s3-bucket/aws"
+# # s3 Bucket & Policy
+# module "s3_bucket_for_logs" {
+#   source = "terraform-aws-modules/s3-bucket/aws"
 
-  bucket = "codeman-s3-bucket-logs"
-  acl    = "log-delivery-write"
+#   bucket = "codeman-s3-bucket-logs"
+#   acl    = "log-delivery-write"
 
-  # Allow deletion of non-empty bucket
-  force_destroy = true
+#   # Allow deletion of non-empty bucket
+#   force_destroy = true
 
-  attach_elb_log_delivery_policy = true  # Required for ALB logs
-  attach_lb_log_delivery_policy  = true  # Required for ALB/NLB logs
-}
+#   attach_elb_log_delivery_policy = true  # Required for ALB logs
+#   attach_lb_log_delivery_policy  = true  # Required for ALB/NLB logs
+# }
 
 # Route53 & Alias Record
 module "Route53" {

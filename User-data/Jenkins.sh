@@ -18,7 +18,7 @@ sudo usermod -aG docker ec2-user
 sudo usermod -aG docker jenkins
 sudo hostnamectl set-hostname Jenkins
 sudo chmod 777 /var/run/docker.sock
-echo "license_key: eu01xxbca018499adedd74cacda9d3d13e7dNRAL" | sudo tee -a /etc/newrelic-infra.yml
+echo "license_key: eu01xx882a3105e4772184b66b4875a36287NRAL" | sudo tee -a /etc/newrelic-infra.yml
 sudo curl -o /etc/yum.repos.d/newrelic-infra.repo https://download.newrelic.com/infrastructure_agent/linux/yum/el/9/x86_64/newrelic-infra.repo
 sudo yum -q makecache -y --disablerepo='*' --enablerepo='newrelic-infra'
 sudo yum install newrelic-infra -y
