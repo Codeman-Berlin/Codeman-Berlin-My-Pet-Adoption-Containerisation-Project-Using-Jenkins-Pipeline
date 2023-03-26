@@ -15,17 +15,20 @@ module "vpc" {
   }
 }
 
+# Security Group
 module "sg" {
   source = "./personal_module/sg"
   vpc    = module.vpc.vpc_id
 }
 
+# Keypair
 module "key_pair" {
   source     = "terraform-aws-modules/key-pair/aws"
   key_name   = var.keyname
   public_key = file("~/keypairs/Codeman.pub")
 }
 
+# Bastion Host
 module "Bastion" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   name                   = var.ec2_name
@@ -45,6 +48,7 @@ module "Bastion" {
   }
 }
 
+# Docker Server
 module "Docker" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   name                   = var.ec2_name
@@ -61,6 +65,7 @@ module "Docker" {
   }
 }
 
+# Jenkins Server
 module "Jenkins" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   name                   = var.ec2_name
@@ -76,6 +81,7 @@ module "Jenkins" {
   }
 }
 
+# Elastic Load balancer for Jenkins
 module "jenkins_elb" {
   source      = "./personal_module/Jenkins_elb"
   subnet_id1  = module.vpc.public_subnets[0]
@@ -84,14 +90,7 @@ module "jenkins_elb" {
   jenkins_id  = module.Jenkins.id
 }
 
-# module "Prod_elb" {
-#   source      = "./personal_module/Prod_elb"
-#   subnet_id1  = module.vpc.public_subnets[0]
-#   subnet_id2  = module.vpc.public_subnets[1]
-#   security_id = module.sg.alb-sg-id
-#   Prod_id     = module.Docker[1].id
-# }
-
+# Ansible Server (QA & Prod)
 module "Ansible" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   name                   = var.ec2_name
@@ -104,8 +103,8 @@ module "Ansible" {
     {
       QAcontainer         = "./playbooks/QAcontainer.yml",
       PRODcontainer       = "./playbooks/PRODcontainer.yml",
-      QA_Server_priv_ip   = module.Docker[1].private_ip,
-      PROD_Server_priv_ip = module.Docker[0].private_ip,
+      QA_Server_priv_ip   = module.Docker[0].private_ip,
+      PROD_Server_priv_ip = module.Docker[1].private_ip,
       keypair             = "~/keypairs/Codeman"
     }
   )
@@ -115,6 +114,7 @@ module "Ansible" {
   }
 }
 
+# SonarQube Server
 module "Sonarqube" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   name                   = var.sonar-name
@@ -130,6 +130,7 @@ module "Sonarqube" {
   }
 }
 
+# Application Load Balancer
 module "App_loadbalancer" {
   source = "./personal_module/Alb"
   lb_security   = module.sg.alb-sg-id
@@ -139,8 +140,30 @@ module "App_loadbalancer" {
   target_instance = module.Docker[1].id
 }
 
+# s3 Bucket & Policy
+module "s3_bucket_for_logs" {
+  source = "terraform-aws-modules/s3-bucket/aws"
+
+  bucket = "codeman-s3-bucket-logs"
+  acl    = "log-delivery-write"
+
+  # Allow deletion of non-empty bucket
+  force_destroy = true
+
+  attach_elb_log_delivery_policy = true  # Required for ALB logs
+  attach_lb_log_delivery_policy  = true  # Required for ALB/NLB logs
+}
+
+# Route53 & Alias Record
+module "Route53" {
+  source = "./personal_module/R53"
+  lb-zone-id = module.App_loadbalancer.lb_zone_id
+  lb-dns = module.App_loadbalancer.lb_DNS
+}
 
 
+
+# Auto Scaling Group
 # module "Auto_Scaling_Group" {
 #  source = "./personal_module/Auto_Scaling_Group"
 #  vpc_subnet1 = module.vpc.public_subnets[0]
