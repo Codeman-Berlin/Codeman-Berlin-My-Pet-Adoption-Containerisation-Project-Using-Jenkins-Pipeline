@@ -28,7 +28,7 @@ module "key_pair" {
   public_key = file("~/keypairs/Codeman.pub")
 }
 
-# Bastion Host
+# Bastion Host Instance
 module "Bastion" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   name                   = var.ec2_name
@@ -48,7 +48,7 @@ module "Bastion" {
   }
 }
 
-# Docker Server
+# Docker Instance
 module "Docker" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   name                   = var.ec2_name
@@ -65,7 +65,7 @@ module "Docker" {
   }
 }
 
-# Jenkins Server
+# Jenkins Instance
 module "Jenkins" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   name                   = var.ec2_name
@@ -90,7 +90,16 @@ module "jenkins_elb" {
   jenkins_id  = module.Jenkins.id
 }
 
-# Ansible Server (QA & Prod)
+# Production Server ELB
+module "Prod_elb" {
+  source      = "./personal_module/Prod_elb"
+  subnet_id1  = module.vpc.public_subnets[0]
+  subnet_id2  = module.vpc.public_subnets[1]
+  security_id = module.sg.alb-sg-id
+  Prod_id     = module.Docker[1].id
+}
+
+# Ansible Instance (QA & Prod)
 module "Ansible" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   name                   = var.ec2_name
@@ -114,7 +123,7 @@ module "Ansible" {
   }
 }
 
-# SonarQube Server
+# SonarQube Instance
 module "Sonarqube" {
   source                 = "terraform-aws-modules/ec2-instance/aws"
   name                   = var.sonar-name
@@ -126,51 +135,64 @@ module "Sonarqube" {
   user_data              = file("./User-data/Sonar.sh")
   tags = {
     Terraform = "true"
-    Name      = "${var.name}-sonar-server"
+    Name      = "${var.name}-sonar-instance"
   }
 }
 
 # Application Load Balancer
 module "App_loadbalancer" {
-  source = "./personal_module/Alb"
-  lb_security   = module.sg.alb-sg-id
-  lb_subnet1 = module.vpc.public_subnets[0]
-  lb_subnet2 = module.vpc.public_subnets[1]
-  vpc_name = module.vpc.vpc_id
+  source          = "./personal_module/App_loadbalancer"
+  lb_security     = module.sg.alb-sg-id
+  lb_subnet1      = module.vpc.public_subnets[0]
+  lb_subnet2      = module.vpc.public_subnets[1]
+  vpc_name        = module.vpc.vpc_id
   target_instance = module.Docker[1].id
 }
 
-# # s3 Bucket & Policy
-# module "s3_bucket_for_logs" {
-#   source = "terraform-aws-modules/s3-bucket/aws"
+# Auto Scaling Group
+module "Auto_Scaling_Group" {
+  source              = "./personal_module/Auto_Scaling_Group"
+  vpc_subnet1         = module.vpc.public_subnets[0]
+  vpc_subnet2         = module.vpc.public_subnets[1]
+  lb_arn              = module.App_loadbalancer.lb_tg
+  asg_sg              = module.sg.docker-sg-id
+  key_pair            = module.key_pair.key_pair_name
+  ami_source_instance = module.Docker[1].id
+}
 
-#   bucket = "codeman-s3-bucket-logs"
-#   acl    = "log-delivery-write"
-
-#   # Allow deletion of non-empty bucket
-#   force_destroy = true
-
-#   attach_elb_log_delivery_policy = true  # Required for ALB logs
-#   attach_lb_log_delivery_policy  = true  # Required for ALB/NLB logs
-# }
+# Database
+module "db" {
+  source                 = "terraform-aws-modules/rds/aws"
+  identifier             = "codemandb"
+  engine                 = "mysql"
+  engine_version         = "5.7"
+  instance_class         = "db.t3.medium"
+  allocated_storage      = 5
+  db_name                = "codemanDB"
+  username               = "admin"
+  password               = "admin"
+  port                   = "3306"
+  vpc_security_group_ids = [module.sg.mysql-sg-id]
+  tags = {
+    Owner       = "user"
+    Environment = "dev"
+  }
+  # DB subnet group
+  create_db_subnet_group = true
+  subnet_ids             = [module.vpc.private_subnets[0], module.vpc.private_subnets[1]]
+  # DB parameter group
+  family = "mysql5.7"
+  # DB option group
+  major_engine_version = "5.7"
+  # Database Deletion Protection
+  deletion_protection = false
+}
 
 # Route53 & Alias Record
-module "Route53" {
-  source = "./personal_module/R53"
+module "R53" {
+  source     = "./personal_module/R53"
   lb-zone-id = module.App_loadbalancer.lb_zone_id
-  lb-dns = module.App_loadbalancer.lb_DNS
+  lb-dns     = module.App_loadbalancer.lb_DNS
 }
 
 
-
-# Auto Scaling Group
-# module "Auto_Scaling_Group" {
-#  source = "./personal_module/Auto_Scaling_Group"
-#  vpc_subnet1 = module.vpc.public_subnets[0]
-#  vpc_subnet2 = module.vpc.public_subnets[1]
-#  lb_arn = module.alb.target_group_arns[0]
-#  asg_sg = module.sg.docker-sg-id
-#  key_pair = module.key_pair.key_pair_name
-#  ami_source_instance = module.Docker[1].id
-
-# }

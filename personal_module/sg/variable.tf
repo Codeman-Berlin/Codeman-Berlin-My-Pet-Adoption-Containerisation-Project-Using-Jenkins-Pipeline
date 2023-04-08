@@ -36,5 +36,5 @@ variable "all_access" {
 }
 
 variable "personal_addy" {
-  default = "2.247.240.182/32"
+  default = ""
 }

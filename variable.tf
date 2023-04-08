@@ -52,40 +52,45 @@ variable "instancetype" {
 }
 
 variable "sonar-name" {
-  default            = "sonar-sever"
+  default = "sonar-sever"
 }
 
 variable "docker_name" {
-  default            = "docker_server"
+  default = "docker_server"
 }
 
-# #ASG Variables
-# variable "ami-name" {
-# default = "host_ami"
-# }
 variable "target-instance" {
-default = "docker_server"
+  default = "docker_server"
 }
-# variable "launch-configname" {
-# default = "host_ASG_LC"
-# }
 
-# variable "sg_name3" {
-# default = "                                                "
-# }
+#ASG Variables
+variable "ami-name" {
+default = "host_ami"
+}
 
-# variable "asg-group-name" {
-# default = "Codeman_ASG"
-# }
-variable "vpc-zone-identifier" {
+variable "launch-configname" {
+default = "host_ASG_LC"
+}
+
+variable "sg_name3" {
+default = "                                                "
+}
+
+variable "asg-group-name" {
+default = "Codeman_ASG"
+}
+
+variable "asg-policy" {
 default = ""
+}
+
+variable "vpc-zone-identifier" {
+  default = ""
 }
 variable "target-group-arn" {
-default = ""
+  default = ""
 }
-# variable "asg-policy" {
-# default = ""
-# }
+
 variable "alb" {
   default = "Codeman-lb"
 }

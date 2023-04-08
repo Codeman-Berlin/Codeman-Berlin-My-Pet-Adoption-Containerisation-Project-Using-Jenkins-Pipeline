@@ -257,6 +257,14 @@ resource "aws_security_group" "Backend_SG" {
     cidr_blocks = [var.all_access]
   }
 
+  ingress {
+    description = "Allow ssh access"
+    from_port   = var.ssh_port
+    to_port     = var.ssh_port
+    protocol    = "tcp"
+    cidr_blocks = [var.all_access]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0

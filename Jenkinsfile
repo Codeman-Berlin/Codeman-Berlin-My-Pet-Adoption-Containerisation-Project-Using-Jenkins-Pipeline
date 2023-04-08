@@ -3,6 +3,10 @@ pipeline{
     tools{
         maven 'maven'
     }
+    environment {
+        DockerUsername = credentials('Docker_name')
+        DockerPassword = credentials('Docker_pass')
+    }
     stages{
         stage('Git pull'){
             steps{
@@ -23,17 +27,17 @@ pipeline{
         }
         stage('build image'){
             steps{
-                sh 'docker build -t daicon001/codeman .'
+                sh 'docker build -t codeman1/codeman_pipeline .'
             }
         }
         stage('login to dockerhub'){
             steps{
-                sh 'docker login -u daicon001 -p Ibrahim24.'
+                sh 'docker login -u codeman1 -p Alawaiye1@.'
             }
         }
         stage('push image'){
             steps{
-                sh 'docker push daicon001/codeman'
+                sh 'docker push codeman1/codeman_pipeline'
             }
         }
         stage('deploy to QA'){
@@ -45,7 +49,7 @@ pipeline{
         }
         stage('slack notification'){
             steps{
-                slackSend channel: 'jenkins-pipeline', message: 'successfully deployed to QA sever need approval to deploy PROD Env', teamDomain: 'Codeman-devops', tokenCredentialId: 'slack-cred'
+                slackSend channel: 'jenkinsbuild', message: 'successfully deployed to QA sever need approval to deploy PROD Env', teamDomain: 'Codeman-devops', tokenCredentialId: 'slack-cred'
             }
         }
         stage('Approval'){
@@ -57,7 +61,7 @@ pipeline{
         }
         stage('deploy to PROD'){
             steps{
-               sshagent(['jenkins-key']) {
+               sshagent(['jenkins']) {
                     sh 'ssh -t -t ec2-user@10.0.1.95 -o StrictHostKeyChecking=no "ansible-playbook /home/ec2-user/playbooks/PRODcontainer.yml"'
                }  
             }
