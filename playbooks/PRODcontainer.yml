@@ -2,11 +2,11 @@
  - hosts: PROD_Server
    become: true
    vars:
-    default_container_image: daicon001/codeman
+    default_container_image: codeman1/codeman_pipeline
 
    tasks:
      - name: login to dockerhub
-       command: docker login -u daicon001 -p Ibrahim24.
+       command: docker login -u codeman1 -p Alaw
 
      - name: Stop any container running
        command: docker stop pet-adoption-container
@@ -14,14 +14,14 @@
 
      - name: Remove stopped container
        command: docker rm pet-adoption-container
-       ignore_errors: yes
+       ignore_errors: no
 
      - name: Remove docker image
-       command: docker rmi daicon001/codeman
-       ignore_errors: yes
+       command: docker rmi codeman1/codeman_pipeline
+       ignore_errors: no
 
      - name: Pull default Docker image
-       command: docker pull  daicon001/codeman
+       command: docker pull  codeman1/codeman_pipeline
 
      - name: Restart a container
-       command: docker run -it -d --name pet-adoption-container -p 8080:8085 daicon001/codeman
+       command: docker run -it -d --name pet-adoption-container -p 8080:8085 codeman1/codeman_pipeline

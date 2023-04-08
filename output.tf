@@ -3,11 +3,11 @@ output "vpc_id" {
 }
 
 output "Bastion_ip" {
-  value  = module.Bastion.public_ip
+  value = module.Bastion.public_ip
 }
 
 output "Docker_ip" {
-  value  = module.Docker.*.private_ip
+  value = module.Docker.*.private_ip
 }
 
 output "Jenkins-ip" {
@@ -18,9 +18,9 @@ output "jenkins_elb_dns" {
   value = module.jenkins_elb.jenkins_elb_dns
 }
 
-# output "prod_elb_dns" {
-#   value = module.Prod_elb.prod_elb_dns
-# }
+output "prod_elb_dns" {
+  value = module.Prod_elb.prod_elb_dns
+}
 
 output "Sonar-pub_ip" {
   value = module.Sonarqube.public_ip
@@ -31,4 +31,8 @@ output "Ansible-ip" {
 
 output "lb_DNS" {
   value = module.App_loadbalancer.lb_DNS
+}
+
+output "name_servers" {
+  value = module.R53.name_Servers
 }

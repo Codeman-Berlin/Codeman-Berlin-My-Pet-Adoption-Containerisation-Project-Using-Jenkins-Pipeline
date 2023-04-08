@@ -10,3 +10,7 @@ variable "lb-zone-id" {
   default = "dummy"
 }
 
+variable "record_type" {
+  default = "A"
+}
+
